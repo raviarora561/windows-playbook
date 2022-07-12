@@ -1,0 +1,24 @@
+---
+
+- hosts: win
+  tasks:
+  - name: Copy a folder recursively where the source is on the remote host
+    ansible.windows.win_copy:
+      src: \\server-ip\Temp
+      dest: C:\vault
+      remote_src: yes
+
+  - name: create a random password
+      random_pwd: "{{ lookup('password', 'c:\vault\secret_id chars=ascii_letters,digits,hexdigits,punctuation') }}"
+
+  - name: Create a new service with extra details
+    ansible.windows.win_service:
+      name: Vault Agent
+      path: C:\vault\vault.exe
+      display_name: Vault Agent
+      description: Vault agent service
+
+  - name: Stop service vault
+    win_service:
+      name:  Vault Agent
+      state: start
