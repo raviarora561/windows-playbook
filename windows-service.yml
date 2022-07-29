@@ -8,8 +8,19 @@
       dest: C:\vault
       remote_src: yes
 
-  - name: create a random password
-      random_pwd: "{{ lookup('password', 'c:\vault\secret_id chars=ascii_letters,digits,hexdigits,punctuation') }}"
+- name: create a random password
+
+  ansible.builtin.set_fact:
+
+    my_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+
+- name: save pass
+  local_action: copy content={{my_pass}} dest=c:\pass.txt
+  
+- name: debug
+  debug:
+
+    msg: "{{ my_pass }}"
 
   - name: Create a new service with extra details
     ansible.windows.win_service:
